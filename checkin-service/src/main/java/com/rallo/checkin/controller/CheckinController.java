@@ -8,7 +8,12 @@ import com.rallo.checkin.model.Goal;
 import com.rallo.checkin.repository.CheckinRepository;
 import com.rallo.checkin.repository.GoalRepository;
 import com.rallo.checkin.service.StreakService;
+import com.rallo.checkin.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +36,13 @@ public class CheckinController {
 
     @PostMapping("/goals/{goalId}")
     @Operation(summary = "Check in for a goal")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Check-in recorded and streak updated"),
+            @ApiResponse(responseCode = "404", description = "Goal not found or does not belong to this user",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "Already checked in for this goal on that date"),
+            @ApiResponse(responseCode = "401", description = "Not authenticated")
+    })
     public ResponseEntity<Void> checkin(
             @RequestHeader("X-User-Id") String userId,
             @PathVariable String goalId,
@@ -59,6 +71,12 @@ public class CheckinController {
 
     @GetMapping("/goals/{goalId}/streak")
     @Operation(summary = "Get current streak for a goal")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Current streak count in days (or weeks for WEEKLY goals)"),
+            @ApiResponse(responseCode = "404", description = "Goal not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Not authenticated")
+    })
     public ResponseEntity<Integer> streak(
             @RequestHeader("X-User-Id") String userId,
             @PathVariable String goalId) {
