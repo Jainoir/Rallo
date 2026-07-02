@@ -8,6 +8,8 @@ Built as a production-style **Java / Spring Boot microservices** backend with an
 
 ## Architecture
 
+A deeper dive — service responsibilities, trade-offs, and the phased roadmap — lives in [ARCHITECTURE.md](ARCHITECTURE.md).
+
 ```mermaid
 flowchart LR
     subgraph Client
