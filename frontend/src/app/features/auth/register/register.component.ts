@@ -15,7 +15,9 @@ import { AuthService } from '../../../core/services/auth.service';
         <input formControlName="email" type="email" placeholder="Email" />
         <input formControlName="password" type="password" placeholder="Password (min 8 chars)" />
         <button type="submit" [disabled]="form.invalid">Register</button>
-        <p *ngIf="error">{{ error }}</p>
+        @if (error) {
+          <p>{{ error }}</p>
+        }
       </form>
       <a routerLink="/auth/login">Already have an account?</a>
     </div>

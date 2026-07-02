@@ -13,6 +13,7 @@ public class OpenApiConfig {
         return new OpenAPI().info(new Info()
                 .title("Rallo — Notification Service")
                 .version("0.1.0")
-                .description("Consumes check-in events from RabbitMQ and runs the nightly streak reminder scheduler."));
+                .description("Serves in-app notifications, consumes check-in events from RabbitMQ "
+                        + "and runs the nightly streak reminder scheduler."));
     }
 }

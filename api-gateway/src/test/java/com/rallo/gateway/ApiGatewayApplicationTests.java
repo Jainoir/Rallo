@@ -9,7 +9,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 class ApiGatewayApplicationTests {
 
     @Container
