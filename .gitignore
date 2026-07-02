@@ -26,6 +26,9 @@ node_modules/
 dist/
 .angular/
 
+# Local planning — never publish
+GAMEPLAN.md
+
 # OS
 .DS_Store
 Thumbs.db
