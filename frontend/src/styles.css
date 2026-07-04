@@ -9,3 +9,164 @@ body {
   background: #f8f9fa;
   color: #212529;
 }
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #212529;
+  color: #fff;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bell {
+  position: relative;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: #dc3545;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  padding: 0 5px;
+  line-height: 1.3;
+}
+
+.panel {
+  max-width: 640px;
+  margin: 1rem auto 0;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+}
+
+.panel h2 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.goal-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.goal-form input[type='text'] {
+  flex: 1;
+  min-width: 160px;
+}
+
+input, select {
+  padding: 0.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font: inherit;
+}
+
+button {
+  padding: 0.5rem 0.9rem;
+  border: none;
+  border-radius: 6px;
+  background: #0d6efd;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #adb5bd;
+  cursor: not-allowed;
+}
+
+button.link {
+  background: none;
+  color: inherit;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.goals, .notifications {
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.goal, .notifications li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+}
+
+.notifications li.unread {
+  background: #eef5ff;
+  border-color: #b6d4fe;
+}
+
+.notifications li button.link {
+  color: #0d6efd;
+}
+
+.goal-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.streak {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.muted {
+  color: #6c757d;
+}
+
+.message {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #fff3cd;
+  border: 1px solid #ffe69c;
+  border-radius: 6px;
+}
+
+.auth-container {
+  max-width: 360px;
+  margin: 4rem auto;
+  padding: 1.5rem;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.auth-container form {
+  display: grid;
+  gap: 0.75rem;
+}

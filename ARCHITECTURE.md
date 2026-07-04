@@ -103,7 +103,8 @@ Security lives in the pipeline, not just in a login screen.
 - Dependency/vulnerability scan (OWASP Dependency-Check)
 - Container image scan (Trivy, results uploaded to GitHub Security)
 - Secret scan (gitleaks, full history)
-- *Planned:* SAST (CodeQL or SonarCloud) and branch protection requiring all checks before merge
+- SAST via CodeQL (Java + TypeScript)
+- *Planned:* branch protection requiring all checks before merge
 
 ---
 
@@ -149,8 +150,8 @@ Sequenced so the pipeline and a deployable slice exist early.
 - [x] Check-in service: goals, check-ins, streak logic (daily)
 - [x] API gateway in front of all services
 - [x] Angular shell: register, log in, guarded dashboard listing goals
-- [ ] Angular MVP: create a goal, check in, see streak
-- [ ] Deploy the full slice
+- [x] Angular MVP: create a goal, check in, see streak, notifications bell
+- [ ] Deploy the full slice (configs + CI stage ready; account setup pending — see DEPLOY.md)
 
 ### Phase 2 — async + caching
 - [x] RabbitMQ + Notification service (event consumers + notification API)
@@ -161,7 +162,8 @@ Sequenced so the pipeline and a deployable slice exist early.
 ### Phase 3 — polish + hardening
 - [ ] Dashboards and group features (Angular)
 - [x] Pipeline hardening: Trivy, dependency + secret scans
-- [ ] SAST (CodeQL / SonarCloud) + branch protection as merge gates
+- [x] SAST (CodeQL) on Java + TypeScript
+- [ ] Branch protection requiring all checks as merge gates
 - [ ] Cloud deploy of all services
 - [ ] Flyway migrations
 - [ ] ADRs + user guide

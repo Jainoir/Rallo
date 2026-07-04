@@ -1,0 +1,22 @@
+# Angular frontend — public; nginx proxies /api/** to the gateway over the private network
+# Deploy from repo root: flyctl deploy frontend
+app = "rallo-jainoir-web"
+primary_region = "yul"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  API_UPSTREAM = "http://rallo-jainoir-gateway.internal:8080"
+
+[http_service]
+  internal_port = 80
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1

@@ -1,0 +1,18 @@
+# Check-in service — private, reached via rallo-jainoir-checkin.internal:8082
+# Deploy from repo root: flyctl deploy --config fly.checkin-service.toml
+app = "rallo-jainoir-checkin"
+primary_region = "yul"
+
+[build]
+  dockerfile = "checkin-service/Dockerfile"
+
+[env]
+  JAVA_TOOL_OPTIONS = "-XX:MaxRAMPercentage=75"
+# Secrets (set with `flyctl secrets set -a rallo-jainoir-checkin`):
+#   SPRING_DATASOURCE_URL, SPRING_DATASOURCE_USERNAME, SPRING_DATASOURCE_PASSWORD,
+#   SPRING_RABBITMQ_ADDRESSES (amqps URL from CloudAMQP), JWT_SECRET
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

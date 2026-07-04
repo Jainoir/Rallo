@@ -139,8 +139,9 @@ Every push and pull request runs through GitHub Actions ([ci.yml](.github/workfl
 2. **Frontend Build & Test** — Angular production build + headless browser tests
 3. **OWASP Dependency-Check** — known-CVE scan of all Java dependencies
 4. **Secret scan** — gitleaks over the full git history
-5. **Container scan** — Trivy scans every service image; findings upload to GitHub Security
-6. **Deploy** — placeholder stage, ready to wire to a cloud provider (Fly.io / Render)
+5. **SAST** — CodeQL analysis of the Java and TypeScript code
+6. **Container scan** — Trivy scans every service image; findings upload to GitHub Security
+7. **Deploy** — merge to `main` deploys all services to Fly.io (setup guide: [DEPLOY.md](DEPLOY.md))
 
 ## Project structure
 

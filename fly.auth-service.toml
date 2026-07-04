@@ -1,0 +1,17 @@
+# Auth service — private, reached via rallo-jainoir-auth.internal:8081
+# Deploy from repo root: flyctl deploy --config fly.auth-service.toml
+app = "rallo-jainoir-auth"
+primary_region = "yul"
+
+[build]
+  dockerfile = "auth-service/Dockerfile"
+
+[env]
+  JAVA_TOOL_OPTIONS = "-XX:MaxRAMPercentage=75"
+# Secrets (set with `flyctl secrets set -a rallo-jainoir-auth`):
+#   SPRING_DATASOURCE_URL, SPRING_DATASOURCE_USERNAME, SPRING_DATASOURCE_PASSWORD, JWT_SECRET
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1
