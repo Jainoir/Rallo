@@ -114,13 +114,17 @@ jobs:
             -t rallo/${{ matrix.service }}:${{ github.sha }} .
 
       - name: Trivy image scan
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: rallo/${{ matrix.service }}:${{ github.sha }}
-          format: sarif
-          output: trivy-${{ matrix.service }}.sarif
-          severity: CRITICAL,HIGH
-          exit-code: '0'   # warn only; set to '1' to fail on findings
+        # Trivy CLI via the official install script — no marketplace action to
+        # resolve, so job setup can't fail on a bad/renamed action ref.
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
+            | sh -s -- -b "$RUNNER_TEMP/trivy-bin"
+          "$RUNNER_TEMP/trivy-bin/trivy" image \
+            --format sarif \
+            --output trivy-${{ matrix.service }}.sarif \
+            --severity CRITICAL,HIGH \
+            --exit-code 0 \
+            rallo/${{ matrix.service }}:${{ github.sha }}
 
       - name: Upload Trivy results to GitHub Security
         # Requires code scanning (public repo or Advanced Security);
