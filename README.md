@@ -159,7 +159,7 @@ rallo/
 
 ## Roadmap
 
-- [ ] Cloud deployment (Fly.io / Render) from the CI pipeline
+- [ ] Cloud deployment live on Render ([render.yaml](render.yaml) ready; account setup in [DEPLOY.md](DEPLOY.md))
 - [ ] Weekly-frequency streak calculation (currently daily only)
 - [ ] Push/email delivery for notifications (in-app only today)
 - [ ] Flyway migrations (currently `ddl-auto: update` for development)
