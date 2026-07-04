@@ -39,6 +39,11 @@ spring:
 jwt:
   secret: ${JWT_SECRET:change-me-in-production-at-least-32-chars!!}
 
+# When set, every forwarded request is stamped with X-Gateway-Secret so
+# downstream services can reject direct traffic. Leave empty in local dev.
+gateway:
+  shared-secret: ${GATEWAY_SHARED_SECRET:}
+
 management:
   endpoints:
     web:

@@ -24,6 +24,10 @@ spring:
     username: ${SPRING_RABBITMQ_USERNAME:rallo}
     password: ${SPRING_RABBITMQ_PASSWORD:rallo_pass}
 
+# When set, only requests stamped by the gateway (X-Gateway-Secret) are accepted.
+gateway:
+  shared-secret: ${GATEWAY_SHARED_SECRET:}
+
 management:
   endpoints:
     web:

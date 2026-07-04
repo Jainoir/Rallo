@@ -95,7 +95,8 @@ Security lives in the pipeline, not just in a login screen.
 - JWT auth with refresh tokens; the gateway validates before routing
 - BCrypt password hashing; stateless sessions
 - Role-based + method-level authorization
-- Secrets via environment variables (`.env` locally, repo secrets in CI) — never committed
+- Downstream services only accept requests stamped with a gateway-injected shared secret (`X-Gateway-Secret`), so they cannot be called directly even when the hosting platform gives them public URLs
+- Secrets via environment variables (`.env` locally, platform-generated in the cloud) — never committed
 
 **Pipeline (GitHub Actions, on every push and pull request)**
 - Backend build + unit + integration tests (`./mvnw verify`)
@@ -129,7 +130,7 @@ Security lives in the pipeline, not just in a login screen.
 
 - Each service containerized with a multi-stage Docker build; the frontend ships as a static bundle behind nginx, which proxies `/api/**` to the gateway
 - `docker-compose` runs the full local stack (4 services + frontend + 3× Postgres + RabbitMQ + Redis)
-- Deploy target: Fly.io or Render for containers + managed Postgres, triggered from CI on merge to `main` (*pipeline stage exists as a placeholder; wiring credentials is the remaining step*)
+- Deploy target: Render free tier ([render.yaml](render.yaml) blueprint, auto-deploys every merge to `main`) + Neon Postgres + CloudAMQP; setup guide in [DEPLOY.md](DEPLOY.md) (*account setup is the remaining step*)
 - Optional flex: managed Kubernetes (EKS/GKE) with infrastructure defined in Terraform
 
 ---

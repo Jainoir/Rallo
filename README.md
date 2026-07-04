@@ -141,7 +141,8 @@ Every push and pull request runs through GitHub Actions ([ci.yml](.github/workfl
 4. **Secret scan** — gitleaks over the full git history
 5. **SAST** — CodeQL analysis of the Java and TypeScript code
 6. **Container scan** — Trivy scans every service image; findings upload to GitHub Security
-7. **Deploy** — merge to `main` deploys all services to Fly.io (setup guide: [DEPLOY.md](DEPLOY.md))
+
+Deployment is handled by Render: every merge to `main` auto-deploys the whole stack from [render.yaml](render.yaml) (setup guide: [DEPLOY.md](DEPLOY.md)).
 
 ## Project structure
 

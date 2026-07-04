@@ -1,0 +1,129 @@
+# Render Blueprint — creates the whole Rallo stack from one "New Blueprint" click.
+# Free tier: all services are public URLs, so downstream services enforce the
+# gateway-injected X-Gateway-Secret (see GatewaySecretFilter). Postgres lives on
+# Neon and RabbitMQ on CloudAMQP — their credentials are entered once in the
+# Render dashboard (marked sync: false below).
+#
+# If a service name is taken, rename it here AND in the three *_SERVICE_URL
+# values and the frontend's API_UPSTREAM.
+
+services:
+  # ── Public entry points ────────────────────────────────────────────────────
+
+  - type: web
+    name: rallo-jainoir-gateway
+    runtime: docker
+    region: ohio
+    plan: free
+    dockerfilePath: ./api-gateway/Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GATEWAY_SHARED_SECRET
+        generateValue: true
+      - key: AUTH_SERVICE_URL
+        value: https://rallo-jainoir-auth.onrender.com
+      - key: CHECKIN_SERVICE_URL
+        value: https://rallo-jainoir-checkin.onrender.com
+      - key: NOTIFICATION_SERVICE_URL
+        value: https://rallo-jainoir-notify.onrender.com
+      - key: JAVA_TOOL_OPTIONS
+        value: -XX:MaxRAMPercentage=75
+
+  - type: web
+    name: rallo-jainoir-web
+    runtime: docker
+    region: ohio
+    plan: free
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    envVars:
+      - key: API_UPSTREAM
+        value: https://rallo-jainoir-gateway.onrender.com
+
+  # ── Backend services (public URLs, but locked to gateway traffic) ─────────
+
+  - type: web
+    name: rallo-jainoir-auth
+    runtime: docker
+    region: ohio
+    plan: free
+    dockerfilePath: ./auth-service/Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: JWT_SECRET
+        fromService:
+          type: web
+          name: rallo-jainoir-gateway
+          envVarKey: JWT_SECRET
+      - key: GATEWAY_SHARED_SECRET
+        fromService:
+          type: web
+          name: rallo-jainoir-gateway
+          envVarKey: GATEWAY_SHARED_SECRET
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: JAVA_TOOL_OPTIONS
+        value: -XX:MaxRAMPercentage=75
+
+  - type: web
+    name: rallo-jainoir-checkin
+    runtime: docker
+    region: ohio
+    plan: free
+    dockerfilePath: ./checkin-service/Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: JWT_SECRET
+        fromService:
+          type: web
+          name: rallo-jainoir-gateway
+          envVarKey: JWT_SECRET
+      - key: GATEWAY_SHARED_SECRET
+        fromService:
+          type: web
+          name: rallo-jainoir-gateway
+          envVarKey: GATEWAY_SHARED_SECRET
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: SPRING_RABBITMQ_ADDRESSES
+        sync: false
+      - key: JAVA_TOOL_OPTIONS
+        value: -XX:MaxRAMPercentage=75
+
+  - type: web
+    name: rallo-jainoir-notify
+    runtime: docker
+    region: ohio
+    plan: free
+    dockerfilePath: ./notification-service/Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: GATEWAY_SHARED_SECRET
+        fromService:
+          type: web
+          name: rallo-jainoir-gateway
+          envVarKey: GATEWAY_SHARED_SECRET
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: SPRING_RABBITMQ_ADDRESSES
+        sync: false
+      - key: JAVA_TOOL_OPTIONS
+        value: -XX:MaxRAMPercentage=75
