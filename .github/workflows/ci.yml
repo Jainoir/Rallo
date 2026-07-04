@@ -91,6 +91,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-test
     strategy:
+      fail-fast: false   # one failing leg must not cancel the other scans
       matrix:
         service: [api-gateway, auth-service, checkin-service, notification-service]
     steps:
@@ -113,7 +114,7 @@ jobs:
             -t rallo/${{ matrix.service }}:${{ github.sha }} .
 
       - name: Trivy image scan
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: rallo/${{ matrix.service }}:${{ github.sha }}
           format: sarif
@@ -122,6 +123,9 @@ jobs:
           exit-code: '0'   # warn only; set to '1' to fail on findings
 
       - name: Upload Trivy results to GitHub Security
+        # Requires code scanning (public repo or Advanced Security);
+        # non-blocking so the scan itself still gates while the repo is private.
+        continue-on-error: true
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy-${{ matrix.service }}.sarif

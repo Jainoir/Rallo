@@ -52,5 +52,6 @@ Every push to `main` auto-deploys all five services (Render watches the repo; th
 
 - **Cold starts:** free services spin down after ~15 min idle; a sleeping Spring service takes ~30–60 s to wake. Before a demo, warm everything with one request to the frontend and one register/login call. If a first request times out, retry — the service is booting.
 - **Why Neon instead of Render's Postgres:** Render's free Postgres is deleted after 90 days; Neon's free tier persists.
+- **Notification timing:** Render wakes services on inbound HTTP only, so a sleeping notification-service consumes queued RabbitMQ events when something calls it. Queues are durable — nothing is lost — and the dashboard calls `/api/notifications` on every load, which wakes it. Milestone notifications simply appear on the next page load.
 - **Redis is not deployed:** the gateway only needs it for rate limiting, which isn't enabled yet. Add Upstash later alongside the leaderboard feature.
 - **Schemas:** Hibernate creates tables on first connect (`ddl-auto: update`); Flyway migrations are on the roadmap.
