@@ -29,6 +29,10 @@ services:
         value: https://rallo-jainoir-checkin.onrender.com
       - key: NOTIFICATION_SERVICE_URL
         value: https://rallo-jainoir-notify.onrender.com
+      # Redis is not deployed yet (only needed for future rate limiting) —
+      # keep it out of the health check so /actuator/health reports UP.
+      - key: MANAGEMENT_HEALTH_REDIS_ENABLED
+        value: "false"
       - key: JAVA_TOOL_OPTIONS
         value: -XX:MaxRAMPercentage=75
 
@@ -100,6 +104,10 @@ services:
         sync: false
       - key: SPRING_RABBITMQ_ADDRESSES
         sync: false
+      # Redis is not deployed yet (only needed for future leaderboards) —
+      # keep it out of the health check so /actuator/health reports UP.
+      - key: MANAGEMENT_HEALTH_REDIS_ENABLED
+        value: "false"
       - key: JAVA_TOOL_OPTIONS
         value: -XX:MaxRAMPercentage=75
 
