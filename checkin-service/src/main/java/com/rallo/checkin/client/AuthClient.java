@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Synchronous client for the auth service, which owns the social graph.
@@ -48,6 +49,10 @@ public class AuthClient {
                 .uri("/api/groups/{groupId}/members", groupId)
                 .header("X-User-Id", userId)
                 .retrieve()
+                .onStatus(status -> status.value() == 404, (request, response) -> {
+                    // auth's membership check failed — surface as our own 404
+                    throw new NoSuchElementException("Group not found: " + groupId);
+                })
                 .body(new ParameterizedTypeReference<>() {});
     }
 }
