@@ -27,6 +27,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                        // error dispatch must be reachable or sendError(401) surfaces as 403
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .build();
     }

@@ -29,6 +29,10 @@ services:
         value: https://rallo-jainoir-checkin.onrender.com
       - key: NOTIFICATION_SERVICE_URL
         value: https://rallo-jainoir-notify.onrender.com
+      # Browser requests arrive via the frontend's nginx proxy but keep their
+      # Origin header, so the gateway must allow the deployed web origin.
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://rallo-jainoir-web.onrender.com
       # Redis is not deployed yet (only needed for future rate limiting) —
       # keep it out of the health check so /actuator/health reports UP.
       - key: MANAGEMENT_HEALTH_REDIS_ENABLED
