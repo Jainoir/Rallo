@@ -106,6 +106,7 @@ services:
       SPRING_RABBITMQ_PASSWORD: rallo_pass
       SPRING_DATA_REDIS_HOST: redis
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production-min-32-chars!!}
+      AUTH_SERVICE_URL: http://auth-service:8081
     depends_on:
       checkin-db:
         condition: service_healthy

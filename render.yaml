@@ -108,8 +108,11 @@ services:
         sync: false
       - key: SPRING_RABBITMQ_ADDRESSES
         sync: false
-      # Redis is not deployed yet (only needed for future leaderboards) —
-      # keep it out of the health check so /actuator/health reports UP.
+      # Leaderboard composition calls the auth service (social graph owner)
+      - key: AUTH_SERVICE_URL
+        value: https://rallo-jainoir-auth.onrender.com
+      # Redis is not deployed yet (leaderboards fall back to direct
+      # computation) — keep it out of the health check so it reports UP.
       - key: MANAGEMENT_HEALTH_REDIS_ENABLED
         value: "false"
       - key: JAVA_TOOL_OPTIONS

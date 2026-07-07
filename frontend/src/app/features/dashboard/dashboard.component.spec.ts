@@ -41,6 +41,10 @@ describe('DashboardComponent', () => {
     httpMock.expectOne(`${environment.apiUrl}/api/goals`).flush(goals);
     httpMock.expectOne(`${environment.apiUrl}/api/notifications`).flush([]);
     httpMock.expectOne(`${environment.apiUrl}/api/notifications/unread-count`).flush(0);
+    // child components: friends + groups panels load on init
+    httpMock.expectOne(`${environment.apiUrl}/api/checkins/streaks/friends`).flush([]);
+    httpMock.expectOne(`${environment.apiUrl}/api/friends/requests`).flush([]);
+    httpMock.expectOne(`${environment.apiUrl}/api/groups`).flush([]);
     goals.forEach(goal =>
       httpMock
         .expectOne(`${environment.apiUrl}/api/checkins/goals/${(goal as { id: string }).id}/streak`)

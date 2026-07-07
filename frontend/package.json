@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
-    "test:ci": "ng test --watch=false --browsers=ChromeHeadless"
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@angular/animations": "^18.0.0",
@@ -22,6 +23,7 @@
     "zone.js": "~0.14.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.48.0",
     "@angular-devkit/build-angular": "^18.0.0",
     "@angular/cli": "^18.0.0",
     "@angular/compiler-cli": "^18.0.0",

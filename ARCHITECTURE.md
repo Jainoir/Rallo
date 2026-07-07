@@ -40,26 +40,29 @@ The Angular client only ever talks to the gateway. The gateway validates the JWT
 ## Services
 
 ### API Gateway — Spring Cloud Gateway
-Single entry point for the frontend. Validates the JWT signature once at the edge, then forwards caller identity to downstream services as `X-User-Id` / `X-User-Roles` headers — services never trust client-supplied identity. Handles CORS and routes `/api/auth/**`, `/api/goals/**`, `/api/checkins/**`, and `/api/notifications/**`. Redis backs gateway-level concerns such as rate limiting.
+Single entry point for the frontend. Validates the JWT signature once at the edge, then forwards caller identity to downstream services as `X-User-Id` / `X-User-Name` / `X-User-Roles` headers — services never trust client-supplied identity ([ADR 0002](docs/adr/0002-jwt-at-the-edge.md)). Handles CORS and routes `/api/auth/**`, `/api/goals/**`, `/api/checkins/**`, and `/api/notifications/**`. *Planned:* Redis-backed rate limiting.
 
 ### Auth Service — Spring Boot
-Owns identity.
+Owns identity and the social graph.
 - Registration, login, JWT access + refresh tokens (Spring Security)
 - Password hashing with BCrypt
 - Roles (`USER`, `ADMIN`) with method-level authorization enabled
-- *Planned:* user profiles, friendships, and study/gym groups
+- Friendships: request by username, accept, list — the accountability graph
+- Groups: create, owner-managed membership, member-only visibility
+- *Planned:* user profiles
 
 ### Check-in Service — Spring Boot
 The core domain.
 - Goals (e.g. "gym 4×/week", "study Spring Boot daily") with daily or weekly frequency
-- Check-ins (one per goal per day, enforced by a unique constraint) and streak calculation
+- Check-ins (one per goal per day, enforced by a unique constraint) and streak calculation — daily streaks and ISO-week weekly streaks with per-week targets, evaluated in the user's timezone (browser-sent `X-Timezone`)
+- Friends/group streak leaderboards: composes the auth service's social graph with local streak data ([ADR 0004](docs/adr/0004-leaderboard-composition.md)); Redis cache-aside with graceful fallback when Redis is absent
 - Publishes `checkin.recorded` and `streak.broken` events to RabbitMQ
-- *Planned:* grace days and timezone-aware period boundaries, weekly-frequency streaks, Redis-cached group leaderboards
+- *Planned:* grace days
 
 ### Notification Service — Spring Boot
 - Consumes check-in events and persists in-app notifications (7-day streak milestones, broken-streak alerts)
 - REST API to list notifications, count unread, and mark as read
-- Nightly `@Scheduled` job scaffolded for streak-break reminders (*logic planned*)
+- Nightly reminder job: an event-built `goal_activity` read model ([ADR 0003](docs/adr/0003-notification-read-model.md)) finds at-risk streaks (`STREAK_REMINDER`, deduplicated per day) and lapsed ones (`STREAK_BROKEN`)
 - *Planned:* push/email delivery, per-user notification preferences
 
 ---
@@ -68,9 +71,9 @@ The core domain.
 
 **Database-per-service (Postgres).** Each service owns its own schema and no service reaches into another's database — they coordinate through APIs and events. This is the principle that distinguishes a real microservices design from a distributed monolith.
 
-**Redis** backs gateway rate limiting today; leaderboard/standings caching is planned alongside group features.
+**Redis** caches group leaderboards (60 s TTL, best-effort with graceful fallback — see [ADR 0004](docs/adr/0004-leaderboard-composition.md)); gateway rate limiting is planned.
 
-Schemas are currently managed by Hibernate (`ddl-auto: update`) for development speed; the move to versioned Flyway migrations is on the roadmap before any production deployment.
+Schemas are versioned with **Flyway** (`db/migration` per service, `baseline-on-migrate` for databases that predate it); Hibernate runs in `validate` mode so drift between entities and schema fails fast — exercised against real Postgres by the Testcontainers integration tests.
 
 ---
 
@@ -114,7 +117,8 @@ Security lives in the pipeline, not just in a login screen.
 - **Unit tests:** JUnit 5 + Mockito + AssertJ — streak calculation, auth flows, JWT issue/verify (including forged and expired tokens), the gateway JWT filter, notification handling
 - **Integration tests:** Testcontainers boots each service against real Postgres/RabbitMQ/Redis; skipped automatically when Docker is unavailable, always run in CI
 - **Frontend:** Jasmine/Karma specs run in headless Chrome
-- *Planned:* E2E tests (Cypress or Playwright), contract tests between services (Spring Cloud Contract)
+- **E2E:** Playwright drives the full compose stack in CI — register → goal → check-in → streak across every service and both message hops
+- *Planned:* contract tests between services (Spring Cloud Contract)
 
 ---
 
@@ -122,7 +126,8 @@ Security lives in the pipeline, not just in a login screen.
 
 - `springdoc-openapi` — live Swagger UI per service (see README for URLs)
 - This `ARCHITECTURE.md`, including the diagram above
-- *Planned:* ADRs (architecture decision records) and a short user guide
+- [ADRs](docs/adr/) recording the key decisions and their trade-offs
+- A [user guide](docs/USER_GUIDE.md) walking through the app's features
 
 ---
 
@@ -145,29 +150,28 @@ Sequenced so the pipeline and a deployable slice exist early.
 - [x] Unit + integration tests (Testcontainers)
 - [x] Swagger via springdoc-openapi
 - [x] GitHub Actions CI with security scans
-- [ ] Deploy auth service to the cloud (prove the pipeline end-to-end)
+- [x] Deploy to the cloud (Render + Neon + CloudAMQP — live)
 
 ### Phase 1 — core MVP
-- [x] Check-in service: goals, check-ins, streak logic (daily)
+- [x] Check-in service: goals, check-ins, streak logic (daily + weekly, timezone-aware)
 - [x] API gateway in front of all services
 - [x] Angular shell: register, log in, guarded dashboard listing goals
 - [x] Angular MVP: create a goal, check in, see streak, notifications bell
-- [ ] Deploy the full slice (configs + CI stage ready; account setup pending — see DEPLOY.md)
+- [x] Deploy the full slice — live demo in the README
 
 ### Phase 2 — async + caching
 - [x] RabbitMQ + Notification service (event consumers + notification API)
-- [x] Scheduled reminder job scaffold (`@Scheduled`)
-- [ ] Reminder job logic (find at-risk streaks, send reminders)
-- [ ] Redis for leaderboards/standings
+- [x] Reminder job: event-built read model, at-risk reminders, broken-streak detection
+- [x] Redis for group leaderboards (cache-aside, graceful fallback)
 
 ### Phase 3 — polish + hardening
-- [ ] Dashboards and group features (Angular)
+- [x] Social features: friendships, groups, streak leaderboards (backend + Angular)
 - [x] Pipeline hardening: Trivy, dependency + secret scans
 - [x] SAST (CodeQL) on Java + TypeScript
 - [ ] Branch protection requiring all checks as merge gates
-- [ ] Cloud deploy of all services
-- [ ] Flyway migrations
-- [ ] ADRs + user guide
+- [x] Flyway migrations (Hibernate in validate mode)
+- [x] Playwright E2E of the full stack in CI
+- [x] ADRs + user guide
 
 ### Phase 4 — optional flex
 - [ ] Terraform / Kubernetes

@@ -147,6 +147,31 @@ button.link {
   color: #6c757d;
 }
 
+.panel h3 {
+  font-size: 0.9rem;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.leaderboard {
+  list-style-position: inside;
+  display: grid;
+  gap: 0.4rem;
+  padding: 0;
+}
+
+.leaderboard li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+}
+
+.leaderboard li:first-child {
+  background: #fffbea;
+  border-color: #ffe69c;
+}
+
 .message {
   margin-bottom: 0.75rem;
   padding: 0.5rem 0.75rem;

@@ -21,6 +21,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DateTimeException;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -45,6 +48,7 @@ public class CheckinController {
     })
     public ResponseEntity<Void> checkin(
             @RequestHeader("X-User-Id") String userId,
+            @RequestHeader(value = "X-Timezone", required = false) String timezone,
             @PathVariable String goalId,
             @Valid @RequestBody CreateCheckinRequest request) {
 
@@ -62,9 +66,9 @@ public class CheckinController {
         checkin.setNotes(request.notes());
         checkinRepository.save(checkin);
 
-        int streak = streakService.currentStreak(goalId, goal.getFrequency());
-        eventPublisher.publishCheckinRecorded(
-                new CheckinRecordedEvent(userId, goalId, goal.getTitle(), request.checkinDate(), streak));
+        int streak = streakService.currentStreak(goal, zoneOf(timezone));
+        eventPublisher.publishCheckinRecorded(new CheckinRecordedEvent(
+                userId, goalId, goal.getTitle(), goal.getFrequency().name(), request.checkinDate(), streak));
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -79,11 +83,22 @@ public class CheckinController {
     })
     public ResponseEntity<Integer> streak(
             @RequestHeader("X-User-Id") String userId,
+            @RequestHeader(value = "X-Timezone", required = false) String timezone,
             @PathVariable String goalId) {
 
         Goal goal = goalRepository.findByIdAndUserId(goalId, userId)
                 .orElseThrow(() -> new NoSuchElementException("Goal not found"));
 
-        return ResponseEntity.ok(streakService.currentStreak(goalId, goal.getFrequency()));
+        return ResponseEntity.ok(streakService.currentStreak(goal, zoneOf(timezone)));
+    }
+
+    /** Browser-sent IANA zone (X-Timezone); falls back to UTC when absent or invalid. */
+    private static ZoneId zoneOf(String timezone) {
+        if (timezone == null || timezone.isBlank()) return ZoneOffset.UTC;
+        try {
+            return ZoneId.of(timezone);
+        } catch (DateTimeException e) {
+            return ZoneOffset.UTC;
+        }
     }
 }

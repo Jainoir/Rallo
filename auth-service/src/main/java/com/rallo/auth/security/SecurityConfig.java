@@ -25,6 +25,9 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        // identity arrives as gateway-verified X-User-Id headers
+                        // (enforced by GatewaySecretFilter), not JWT re-validation
+                        .requestMatchers("/api/friends/**", "/api/groups/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
                         // error dispatch must be reachable or sendError(401) surfaces as 403

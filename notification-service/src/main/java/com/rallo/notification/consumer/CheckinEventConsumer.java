@@ -4,6 +4,7 @@ import com.rallo.notification.config.RabbitMQConfig;
 import com.rallo.notification.events.CheckinRecordedEvent;
 import com.rallo.notification.events.StreakBrokenEvent;
 import com.rallo.notification.model.NotificationType;
+import com.rallo.notification.service.GoalActivityService;
 import com.rallo.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,11 +17,14 @@ import org.springframework.stereotype.Component;
 public class CheckinEventConsumer {
 
     private final NotificationService notificationService;
+    private final GoalActivityService goalActivityService;
 
     @RabbitListener(queues = RabbitMQConfig.CHECKIN_RECORDED)
     public void onCheckinRecorded(CheckinRecordedEvent event) {
         log.info("Check-in recorded — user={}, goal='{}', streak={}",
                 event.userId(), event.goalTitle(), event.currentStreak());
+
+        goalActivityService.recordCheckin(event);
 
         if (event.currentStreak() > 0 && event.currentStreak() % 7 == 0) {
             notificationService.record(event.userId(), NotificationType.STREAK_MILESTONE,

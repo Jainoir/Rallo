@@ -12,12 +12,17 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update        # switch to validate + Flyway migrations for production
+      ddl-auto: validate      # Flyway owns the schema (src/main/resources/db/migration)
     show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+
+  flyway:
+    # Existing databases created by Hibernate are baselined at V1; fresh
+    # databases run the full migration chain from V1.
+    baseline-on-migrate: true
 
 # When set, only requests stamped by the gateway (X-Gateway-Secret) are accepted.
 gateway:

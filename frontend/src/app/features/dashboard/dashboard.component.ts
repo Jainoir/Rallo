@@ -4,11 +4,13 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { Goal, GoalService } from '../../core/services/goal.service';
 import { AppNotification, NotificationService } from '../../core/services/notification.service';
+import { FriendsComponent } from './friends.component';
+import { GroupsComponent } from './groups.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, FriendsComponent, GroupsComponent],
   template: `
     <header class="topbar">
       <h1>Rallo</h1>
@@ -80,6 +82,9 @@ import { AppNotification, NotificationService } from '../../core/services/notifi
           }
         </ul>
       </section>
+
+      <app-friends />
+      <app-groups />
     </main>
   `,
 })
