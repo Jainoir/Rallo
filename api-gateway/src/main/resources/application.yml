@@ -24,7 +24,7 @@ spring:
         - id: auth-service
           uri: ${AUTH_SERVICE_URL:http://localhost:8081}
           predicates:
-            - Path=/api/auth/**
+            - Path=/api/auth/**,/api/friends/**,/api/groups/**
 
         - id: checkin-service
           uri: ${CHECKIN_SERVICE_URL:http://localhost:8082}
