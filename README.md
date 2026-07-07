@@ -6,6 +6,10 @@
 
 Built as a production-style **Java / Spring Boot microservices** backend with an **Angular / TypeScript** frontend, wired together with an API gateway, per-service PostgreSQL databases, and event-driven messaging over RabbitMQ.
 
+**🌐 Live demo:** [rallo-jainoir-web.onrender.com](https://rallo-jainoir-web.onrender.com) — register, add a goal, check in. *(Free-tier hosting: the first request after idle takes ~1 minute while services wake.)*
+
+![Rallo dashboard](docs/dashboard.png)
+
 ## Architecture
 
 A deeper dive — service responsibilities, trade-offs, and the phased roadmap — lives in [ARCHITECTURE.md](ARCHITECTURE.md).
@@ -159,7 +163,7 @@ rallo/
 
 ## Roadmap
 
-- [ ] Cloud deployment live on Render ([render.yaml](render.yaml) ready; account setup in [DEPLOY.md](DEPLOY.md))
+- [x] Cloud deployment live on Render ([render.yaml](render.yaml) blueprint + Neon Postgres + CloudAMQP, $0/month)
 - [ ] Weekly-frequency streak calculation (currently daily only)
 - [ ] Push/email delivery for notifications (in-app only today)
 - [ ] Flyway migrations (currently `ddl-auto: update` for development)
