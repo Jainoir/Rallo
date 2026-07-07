@@ -1,7 +1,12 @@
 FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
 WORKDIR /workspace
 
+# The root pom declares all modules, so every module pom must exist
+# for Maven to build the reactor — even when building just one module.
 COPY pom.xml .
+COPY api-gateway/pom.xml api-gateway/
+COPY auth-service/pom.xml auth-service/
+COPY checkin-service/pom.xml checkin-service/
 COPY notification-service/pom.xml notification-service/
 RUN mvn dependency:go-offline -pl notification-service -am -q
 
