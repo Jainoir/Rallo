@@ -1,11 +1,12 @@
 name: CodeQL
 
-# NOTE: while the repo is private, code-scanning upload is rejected (needs a
-# public repo or Advanced Security), so automatic triggers are disabled to
-# avoid a guaranteed-red run on every push. When the repo goes public,
-# restore:  push/pull_request on [main] + weekly schedule.
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1'   # weekly, Monday 06:00 UTC
 
 jobs:
   analyze:
