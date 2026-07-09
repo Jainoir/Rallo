@@ -8,17 +8,23 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   template: `
-    <div class="auth-container">
-      <h2>Sign in to Rallo</h2>
-      <form [formGroup]="form" (ngSubmit)="submit()">
-        <input formControlName="email" type="email" placeholder="Email" />
-        <input formControlName="password" type="password" placeholder="Password" />
-        <button type="submit" [disabled]="form.invalid">Sign in</button>
-        @if (error) {
-          <p>{{ error }}</p>
-        }
-      </form>
-      <a routerLink="/auth/register">Create account</a>
+    <div class="auth-page">
+      <div class="auth-card">
+        <div class="auth-brand">🔥 Rallo</div>
+        <p class="auth-tagline">Build streaks. Stay accountable.</p>
+        <div class="auth-container">
+          <h2>Sign in to Rallo</h2>
+          <form [formGroup]="form" (ngSubmit)="submit()">
+            <input formControlName="email" type="email" placeholder="Email" />
+            <input formControlName="password" type="password" placeholder="Password" />
+            <button type="submit" [disabled]="form.invalid">Sign in</button>
+            @if (error) {
+              <p>{{ error }}</p>
+            }
+          </form>
+          <a routerLink="/auth/register">New here? Create an account</a>
+        </div>
+      </div>
     </div>
   `,
 })

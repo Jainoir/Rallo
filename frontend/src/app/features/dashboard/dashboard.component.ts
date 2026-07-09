@@ -13,7 +13,7 @@ import { GroupsComponent } from './groups.component';
   imports: [ReactiveFormsModule, FriendsComponent, GroupsComponent],
   template: `
     <header class="topbar">
-      <h1>Rallo</h1>
+      <span class="brand"><span class="flame">🔥</span>Rallo</span>
       <div class="topbar-actions">
         <button type="button" class="bell" (click)="toggleNotifications()">
           🔔
@@ -26,7 +26,7 @@ import { GroupsComponent } from './groups.component';
     </header>
 
     @if (showNotifications()) {
-      <section class="panel">
+      <section class="panel notifications-panel">
         <h2>Notifications</h2>
         <ul class="notifications">
           @for (notification of notifications(); track notification.id) {
@@ -44,47 +44,51 @@ import { GroupsComponent } from './groups.component';
     }
 
     <main>
-      <section class="panel">
-        <h2>New goal</h2>
-        <form class="goal-form" [formGroup]="form" (ngSubmit)="createGoal()">
-          <input formControlName="title" type="text" placeholder="e.g. Gym session" />
-          <select formControlName="frequency">
-            <option value="DAILY">Daily</option>
-            <option value="WEEKLY">Weekly</option>
-          </select>
-          @if (form.controls.frequency.value === 'WEEKLY') {
-            <input formControlName="targetDaysPerWeek" type="number" min="1" max="7"
-                   placeholder="Days/week" />
-          }
-          <button type="submit" [disabled]="form.invalid">Add goal</button>
-        </form>
-      </section>
+      <div class="stack">
+        <section class="panel">
+          <h2>New goal</h2>
+          <form class="goal-form" [formGroup]="form" (ngSubmit)="createGoal()">
+            <input formControlName="title" type="text" placeholder="e.g. Gym session" />
+            <select formControlName="frequency">
+              <option value="DAILY">Daily</option>
+              <option value="WEEKLY">Weekly</option>
+            </select>
+            @if (form.controls.frequency.value === 'WEEKLY') {
+              <input formControlName="targetDaysPerWeek" type="number" min="1" max="7"
+                     placeholder="Days/week" />
+            }
+            <button type="submit" [disabled]="form.invalid">Add goal</button>
+          </form>
+        </section>
 
-      <section class="panel">
-        <h2>Your goals</h2>
-        @if (message()) {
-          <p class="message">{{ message() }}</p>
-        }
-        <ul class="goals">
-          @for (goal of goals(); track goal.id) {
-            <li class="goal">
-              <div>
-                <strong>{{ goal.title }}</strong>
-                <span class="muted"> — {{ goal.frequency === 'DAILY' ? 'daily' : 'weekly' }}</span>
-              </div>
-              <div class="goal-actions">
-                <span class="streak" title="Current streak">🔥 {{ streaks()[goal.id] ?? '…' }}</span>
-                <button type="button" (click)="checkin(goal)">Check in</button>
-              </div>
-            </li>
-          } @empty {
-            <li>No active goals yet. Add one above to start a streak.</li>
+        <section class="panel">
+          <h2>Your goals</h2>
+          @if (message()) {
+            <p class="message">{{ message() }}</p>
           }
-        </ul>
-      </section>
+          <ul class="goals">
+            @for (goal of goals(); track goal.id) {
+              <li class="goal">
+                <div>
+                  <strong>{{ goal.title }}</strong>
+                  <span class="muted"> — {{ goal.frequency === 'DAILY' ? 'daily' : 'weekly' }}</span>
+                </div>
+                <div class="goal-actions">
+                  <span class="streak" title="Current streak">🔥 {{ streaks()[goal.id] ?? '…' }}</span>
+                  <button type="button" (click)="checkin(goal)">Check in</button>
+                </div>
+              </li>
+            } @empty {
+              <li>No active goals yet. Add one above to start a streak.</li>
+            }
+          </ul>
+        </section>
+      </div>
 
-      <app-friends />
-      <app-groups />
+      <div class="stack">
+        <app-friends />
+        <app-groups />
+      </div>
     </main>
   `,
 })
