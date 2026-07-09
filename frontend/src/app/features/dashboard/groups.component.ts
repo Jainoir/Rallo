@@ -4,10 +4,9 @@ import { Group, GroupService } from '../../core/services/group.service';
 import { LeaderboardEntry } from '../../core/services/friends.service';
 
 @Component({
-  selector: 'app-groups',
-  standalone: true,
-  imports: [ReactiveFormsModule],
-  template: `
+    selector: 'app-groups',
+    imports: [ReactiveFormsModule],
+    template: `
     <section class="panel">
       <h2>Groups</h2>
 
@@ -46,7 +45,7 @@ import { LeaderboardEntry } from '../../core/services/friends.service';
         </form>
       }
     </section>
-  `,
+  `
 })
 export class GroupsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

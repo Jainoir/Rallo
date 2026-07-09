@@ -7,10 +7,9 @@ import {
 } from '../../core/services/friends.service';
 
 @Component({
-  selector: 'app-friends',
-  standalone: true,
-  imports: [ReactiveFormsModule],
-  template: `
+    selector: 'app-friends',
+    imports: [ReactiveFormsModule],
+    template: `
     <section class="panel">
       <h2>Friends</h2>
 
@@ -46,7 +45,7 @@ import {
         }
       </ol>
     </section>
-  `,
+  `
 })
 export class FriendsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

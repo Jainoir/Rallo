@@ -8,10 +8,9 @@ import { FriendsComponent } from './friends.component';
 import { GroupsComponent } from './groups.component';
 
 @Component({
-  selector: 'app-dashboard',
-  standalone: true,
-  imports: [ReactiveFormsModule, FriendsComponent, GroupsComponent],
-  template: `
+    selector: 'app-dashboard',
+    imports: [ReactiveFormsModule, FriendsComponent, GroupsComponent],
+    template: `
     <header class="topbar">
       <span class="brand"><span class="flame">🔥</span>Rallo</span>
       <div class="topbar-actions">
@@ -90,7 +89,7 @@ import { GroupsComponent } from './groups.component';
         <app-groups />
       </div>
     </main>
-  `,
+  `
 })
 export class DashboardComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
