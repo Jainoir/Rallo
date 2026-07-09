@@ -41,7 +41,13 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        # On failure, surface the npm error as an annotation (job logs are
+        # auth-only via API; annotations are publicly readable).
+        run: |
+          npm ci 2> npm-err.txt || {
+            echo "::error title=npm ci failed::$(tail -c 1200 npm-err.txt | tr '\n' ' ')"
+            exit 1
+          }
 
       - name: Build
         run: npm run build
